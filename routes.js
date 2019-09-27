@@ -1,10 +1,13 @@
+
+const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const { pushFile } = require('./file.js');
 const { connection } = require('./database.js');
 
+connection.connect();
+
 router.get('/movies', (req, res) => {
-  connection.connect();
   connection.query(`SELECT * FROM movies`, (error, results) => {
     if (error) res.status(400).json({ error });
     res.status(201).json({ movies : results});
@@ -13,7 +16,6 @@ router.get('/movies', (req, res) => {
 
 router.get('/movie/:id', (req, res) => {
   const { id } = req.params; 
-  connection.connect();
   connection.query(`SELECT * FROM movies WHERE id = ${id}`, (error, results) => {
     if (error) res.status(400).json({ error });
     res.status(201).json({ movie : results[0]});
@@ -22,33 +24,31 @@ router.get('/movie/:id', (req, res) => {
 
 router.post('/movie', (req, res) => {
   const { title, year } = req.body; 
-  connection.connect();
-  connection.query(`INSERT INTO movies ('title', 'year' ) VALUES (${title}, ${year})`, (error, results) => {
+  connection.query(`INSERT INTO movies (title, year) VALUES ( "${title}", "${year}")`, (error, results) => {
     if (error) res.status(400).json({ error });
-    res.status(201).json({ user : results[0]});
+    res.status(201).json({ movie : { id: results[0].insertId, title , year }});
   });      
 });
 
 router.put('/movie/:id', (req, res) => {
   const { id } = req.params; 
   const { title, year } = req.body; 
-  const query = '';
-  if (req.body.title) query += `'title' = ${title}`;
-  if (req.body.year) query += `'year' = ${year}`;
-  connection.connect();
-  connection.query(`UPDATE movies SET ${query} WHERE id = ${id}`, (error, results) => {
+  let queryTitle = '';
+  let queryYear = '';
+  if (req.body.title) queryTitle = `title = "${title}"`;
+  if (req.body.year) queryYear = `year = "${year}"`;
+  connection.query(`UPDATE movies SET ${queryTitle} ${queryYear} WHERE id = ${id}`, (error, results) => {
     if (error) res.status(400).json({ error });
-    res.status(201).json({ movie : results[0]});
+    res.status(201).json({ message: `Movie ${id} updated`});
   });      
 });
 
 
 router.delete('/movie/:id', (req, res) => {
   const { id } = req.params; 
-  connection.connect();
   connection.query(`DELETE FROM movies WHERE id = ${id}`, (error, results) => {
     if (error) res.status(400).json({ error });
-    res.status(201).json({ movie : results[0]});
+    res.status(201).json({ message: `Movie ${id} deleted`});
   });      
 });
 
@@ -63,7 +63,7 @@ router.get('/moviesFiles', (req, res) => {
 router.get('/search', (req, res) => {
   const ombdHost = 'http://www.omdbapi.com';
   const apiKey = 'ecff1887';
-  const url = `${ombdHost}?apikey=${apiKey}&s=${req.query.title}&type=movie&r=json&plot=full`,; 
+  const url = `${ombdHost}?apikey=${apiKey}&s=${req.query.title}&type=movie&r=json&plot=full`; 
   axios.get(url)
   .then(response => res.status(400).json({ contenu : response.data}))
   .catch((err) => res.status(201).json({ err }));

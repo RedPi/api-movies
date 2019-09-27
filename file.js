@@ -7,6 +7,7 @@ const destDir = 'monDossier';
 const createMoviesFile = () => {
   connection.connect();
   connection.query(`SELECT * FROM movies`, (error, results) => {
+    connection.end();
     if (error) res.status(400).json({ error });
     mkdir(destDir, () => {
       const filenameToCreate = join(destDir, `movies.txt`);
