@@ -46,6 +46,8 @@ Get one movie :
 Create movie :
 
     POST /movie
+    
+    params = { title, year }
    
 Update movie :
 
