@@ -7,5 +7,7 @@ const connection = mysql.createConnection({
   database : 'api-movies'
 });
 
+connection.connect();
+
 module.exports = { connection };
 

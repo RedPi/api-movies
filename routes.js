@@ -2,10 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const { pushFile } = require('./file.js');
+const { createMoviesFile } = require('./file.js');
 const { connection } = require('./database.js');
-
-connection.connect();
 
 router.get('/movies', (req, res) => {
   connection.query(`SELECT * FROM movies`, (error, results) => {
@@ -54,10 +52,9 @@ router.delete('/movie/:id', (req, res) => {
 
 
 router.get('/moviesFiles', (req, res) => {
-  const result = createMoviesFile();
-  if (!result) res.status(400).json({ error: 'File not saved' });
-  res.status(201).json({ message : 'File saved' });
-
+   createMoviesFile()
+    .then(() => res.status(201).json({ message : 'File saved' }))
+    .catch(err => res.status(400).json({ error: 'File not saved' }));
 });
 
 router.get('/search', (req, res) => {
