@@ -29,29 +29,29 @@ The application will be launch at this url :
 
 Search on OMDB :
 
-   GET /search?title=titre_de_film
+    GET /search?title=titre_de_film
     
 Generate movies files :
 
-   GET /moviesFiles
+    GET /moviesFiles
    
 Get all movies :
 
-   GET /movies
+    GET /movies
    
 Get one movie :
 
-   GET /movie/:id
+    GET /movie/:id
    
 Create movie :
 
-   POST /movie
+    POST /movie
    
 Update movie :
 
-   PUT /movie
+    PUT /movie
    
 Delete movie :
 
-  DELETE /movie/:id
+    DELETE /movie/:id
 
